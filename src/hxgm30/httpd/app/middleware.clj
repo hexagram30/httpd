@@ -15,6 +15,12 @@
     [ring.util.response :as ring-response]
     [taoensso.timbre :as log]))
 
+(defn wrap-log-request
+  [handler]
+  (fn [req]
+    (log/debug "Got request:" req)
+    (handler req)))
+
 (defn wrap-cors
   "Ring-based middleware for supporting CORS requests."
   [handler]

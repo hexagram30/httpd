@@ -16,6 +16,7 @@
       (middleware/wrap-api-version-dispatch
          httpd-component
          (middleware/reitit-auth httpd-component))
+      middleware/wrap-log-request
       (ring-defaults/wrap-defaults ring-defaults/api-defaults)
       (middleware/wrap-resource httpd-component)
       middleware/wrap-trailing-slash

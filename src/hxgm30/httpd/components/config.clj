@@ -54,6 +54,14 @@
   [system]
   (get-in (get-cfg system) [:httpd :skip-static]))
 
+(defn api-routes
+  [system]
+  (resolve (get-in (get-cfg system) [:httpd :route-fns :api])))
+
+(defn site-routes
+  [system]
+  (resolve (get-in (get-cfg system) [:httpd :route-fns :site])))
+
 (defn log-color?
   [system]
   (get-in (get-cfg system) [:logging :color]))

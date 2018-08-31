@@ -2,7 +2,6 @@
   "Custom ring middleware for hexagram30 web apps and services."
   (:require
     [clojure.string :as string]
-    [hxgm30.httpd.app.routes.rest.core :as rest-routes]
     [hxgm30.httpd.components.config :as config]
     [hxgm30.httpd.kit.request :as request]
     [hxgm30.httpd.kit.response :as response]
@@ -124,11 +123,11 @@
 
 (defn wrap-api-version-dispatch
   ""
-  [site-routes system opts]
+  [site-routes system api-routes opts]
   (fn [req]
     (log/trace "Got site-routes:" (vec site-routes))
     (let [api-version (request/accept-api-version system req)
-          routes (concat site-routes (rest-routes/all system api-version))
+          routes (concat site-routes (api-routes system api-version))
           handler (ring/ring-handler (ring/router routes opts))
           header (format "%s; format=%s"
                          (request/accept-media-type system req)

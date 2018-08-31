@@ -1,5 +1,5 @@
 (ns hxgm30.httpd.app.routes.site
-  "This namespace defines the REST routes provided by this service.
+  "This namespace defines the regular content routes provided by this service.
 
   Upon idnetifying a particular request as matching a given route, work is then
   handed off to the relevant request handler function."

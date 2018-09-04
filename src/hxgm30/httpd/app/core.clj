@@ -8,19 +8,23 @@
     [reitit.ring :as ring]
     [taoensso.timbre :as log]))
 
+(defn wrap-defaults
+  [httpd-component api-routes site-routes]
+  (-> httpd-component
+      (site-routes)
+      (middleware/wrap-api-version-dispatch
+         httpd-component
+         api-routes
+         (middleware/reitit-auth httpd-component))
+      middleware/wrap-log-request
+      (ring-defaults/wrap-defaults ring-defaults/api-defaults)
+      (middleware/wrap-resource httpd-component)
+      middleware/wrap-trailing-slash
+      middleware/wrap-cors
+      (middleware/wrap-not-found httpd-component)))
+
 (defn main
   [httpd-component]
-  (let [api-routes (config/api-routes httpd-component)
-        site-routes (config/site-routes httpd-component)]
-    (-> httpd-component
-        (site-routes)
-        (middleware/wrap-api-version-dispatch
-           httpd-component
-           api-routes
-           (middleware/reitit-auth httpd-component))
-        middleware/wrap-log-request
-        (ring-defaults/wrap-defaults ring-defaults/api-defaults)
-        (middleware/wrap-resource httpd-component)
-        middleware/wrap-trailing-slash
-        middleware/wrap-cors
-        (middleware/wrap-not-found httpd-component))))
+  (wrap-defaults httpd-component
+                 (config/api-routes httpd-component)
+                 (config/site-routes httpd-component)))

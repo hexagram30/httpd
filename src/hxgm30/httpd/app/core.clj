@@ -10,6 +10,8 @@
 
 (defn wrap-defaults
   [httpd-component api-routes site-routes]
+  (log/trace "Got API routes:" api-routes)
+  (log/trace "Got site routes:" site-routes)
   (-> httpd-component
       (site-routes)
       (middleware/wrap-api-version-dispatch
@@ -21,10 +23,12 @@
       (middleware/wrap-resource httpd-component)
       middleware/wrap-trailing-slash
       middleware/wrap-cors
-      (middleware/wrap-not-found httpd-component)))
+      (middleware/wrap-not-found httpd-component)
+      middleware/wrap-log-response))
 
 (defn main
   [httpd-component]
+  (log/trace "httpd-component keys:" (keys httpd-component))
   (wrap-defaults httpd-component
                  (config/api-routes httpd-component)
                  (config/site-routes httpd-component)))

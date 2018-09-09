@@ -1,8 +1,11 @@
 (ns hxgm30.httpd.components.config
   (:require
+    [clojure.string :as string]
     [com.stuartsierra.component :as component]
     [hxgm30.httpd.config :as config]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log])
+  (:import
+    (clojure.lang Symbol)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Utility Functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -13,6 +16,16 @@
   (->> [:config :data]
        (get-in system)
        (into {})))
+
+(defn resolve-fully-qualified-fn
+  [^Symbol fqfn]
+  (when fqfn
+    (try
+      (let [[name-sp fun] (mapv symbol (string/split (str fqfn) #"/"))]
+        (require name-sp)
+        (var-get (ns-resolve name-sp fun)))
+      (catch  Exception _
+        (log/warn "Couldn't resolve one or more of" fqfn)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Config Component API   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,11 +69,13 @@
 
 (defn api-routes
   [system]
-  (resolve (get-in (get-cfg system) [:httpd :route-fns :api])))
+  (resolve-fully-qualified-fn
+    (get-in (get-cfg system) [:httpd :route-fns :api])))
 
 (defn site-routes
   [system]
-  (resolve (get-in (get-cfg system) [:httpd :route-fns :site])))
+  (resolve-fully-qualified-fn
+    (get-in (get-cfg system) [:httpd :route-fns :site])))
 
 (defn log-color?
   [system]

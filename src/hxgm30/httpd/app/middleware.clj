@@ -20,6 +20,13 @@
     (log/debug "Got request:" req)
     (handler req)))
 
+(defn wrap-log-response
+  [handler]
+  (fn [req]
+    (let [resp (handler req)]
+      (log/debug "Sending response:" resp)
+      resp)))
+
 (defn wrap-cors
   "Ring-based middleware for supporting CORS requests."
   [handler]

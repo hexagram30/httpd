@@ -10,7 +10,8 @@
 ;;;   Component Lifecycle Implementation   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrecord HTTPD [])
+(defrecord HTTPD [
+  server])
 
 (defn start
   [this]
